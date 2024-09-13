@@ -7,7 +7,7 @@ class Paises extends StatefulWidget {
 }
 
 class _CountriesViewState extends State<Paises> {
-  late Future<List<String>> _countriesFuture;
+  late Future<List<Country>> _countriesFuture;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _CountriesViewState extends State<Paises> {
         title: Text('Lista de Países'),
         backgroundColor: Colors.black,
       ),
-      body: FutureBuilder<List<String>>(
+      body: FutureBuilder<List<Country>>(
         future: _countriesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -33,13 +33,21 @@ class _CountriesViewState extends State<Paises> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No hay países disponibles'));
           } else {
-            // Muestra la lista de países
-            List<String> countries = snapshot.data!;
+            // Muestra la lista de países y bandera
+            List<Country> countries = snapshot.data!;
             return ListView.builder(
               itemCount: countries.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(countries[index]),
+                leading: Image.network(
+                countries[index].flag, // Muestra la bandera del país
+                width: 50, // Ancho de la bandera
+                height: 30, // Alto de la bandera
+                errorBuilder: (context, error, stackTrace) {
+                return Icon(Icons.error); // Muestra un icono si la bandera no carga
+                },
+                ),
+                title: Text(countries[index].name), // Muestra el nombre del país
                 );
               },
             );
